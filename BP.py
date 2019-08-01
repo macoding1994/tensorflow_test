@@ -1,5 +1,6 @@
 import time
 from numpy import *
+from sklearn.model_selection import train_test_split
 
 #--------------数据集 --------------------#
 
@@ -19,11 +20,23 @@ from numpy import *
 # t_t = [[0.0013], [0.0014],
 #        [0.0022]]  # 用来测试的数据集 对应的实际结果 y_test
 # --------------------------------------------------
-
+data = []
+label = []
+path = 'data'
+with open(path) as f:
+    for var in f.readlines():
+        ret = var.strip().split("\t")
+        ret_list = []
+        for i in ret:
+            ret_list.append(float(i))
+        data.append(ret_list[:-1])
+        label.append(ret_list[-1])
+Train_Data, Test_Data, Train_Label, Test_Label = train_test_split(data, label, test_size=1 / 4, random_state=10)
+p_s ,t_s,p_t,t_t= Train_Data,Train_Label,Test_Data,Test_Label
 
 #--------------- 超参数设定 ------------------#
 
-n_epoch = 20000  # 训练次数
+n_epoch = 500  # 训练次数
 
 HNum = 2  # 各层隐藏层节点数
 
@@ -39,7 +52,8 @@ TNum = 7  # 特征层节点数 (特征数)
 SNum = len(p_s)  # 样本数
 
 INum = len(p_s[0])  # 输入层节点数（每组数据的维度）
-ONum = len(t_s[0])  # 输出层节点数（结果的维度）
+# ONum = len(t_s[0])  # 输出层节点数（结果的维度）
+ONum = 1
 StudyTime = 0  # 学习次数
 KtoOne = 0.0  # 归一化系数
 e = 0.0  # 均方差跟
@@ -343,3 +357,12 @@ for i in result:
 print('\n实际结果 : ')
 for i in t_t:
     print(i)
+
+with open('模型预测.txt','w') as f:
+    for i in result:
+        f.write(str(i))
+        f.write('\n')
+with open('实际预测.txt','w') as f:
+    for i in t_t:
+        f.write(str(i))
+        f.write('\n')

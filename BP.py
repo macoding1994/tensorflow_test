@@ -1,6 +1,7 @@
 import time
 from numpy import *
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 #--------------数据集 --------------------#
 
@@ -36,9 +37,9 @@ p_s ,t_s,p_t,t_t= Train_Data,Train_Label,Test_Data,Test_Label
 
 #--------------- 超参数设定 ------------------#
 
-n_epoch = 500  # 训练次数
+n_epoch = 2000  # 训练次数
 
-HNum = 2  # 各层隐藏层节点数
+HNum = 8  # 各层隐藏层节点数
 
 HCNum = 2  # 隐藏层层数
 
@@ -357,6 +358,14 @@ for i in result:
 print('\n实际结果 : ')
 for i in t_t:
     print(i)
+
+plt.scatter(range(len(result)),result,c='b')
+plt.scatter(range(len(t_t)),t_t,c='r')
+plt.xlabel('Count')
+plt.ylabel('Wind Speed')
+plt.show()
+plt.close()
+
 
 with open('模型预测.txt','w') as f:
     for i in result:

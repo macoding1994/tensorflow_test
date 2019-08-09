@@ -44,16 +44,16 @@ def wind_speed_prediction():
     # 定义隐藏层：神经元8个
     with tf.variable_scope("hidden"):
         # 初始化权重和偏置
-        weight_hid = tf.Variable(tf.random_normal([4, 8], mean=0.0, stddev=1.0), name="weight_hid")
-        bias_hid = tf.Variable(tf.random_normal([1, 8], mean=0.0, stddev=1.0), name="bias_hid")
+        weight_hid = tf.Variable(tf.random_normal([4, 8], mean=0.0, stddev=1.0, dtype=tf.float32), name="weight_hid")
+        bias_hid = tf.Variable(tf.random_normal([1, 8], mean=0.0, stddev=1.0, dtype=tf.float32), name="bias_hid")
         # 隐藏层前向传播计算
-        A1 = tf.matmul(X, weight_hid) + bias_hid
+        A1 = tf.nn.relu(tf.matmul(X, weight_hid) + bias_hid)
 
     # 定义输出层：
     with tf.variable_scope("fc"):
         # 初始化权重和偏置
-        weight_fc = tf.Variable(tf.random_normal([8, 1], mean=0.0, stddev=1.0), name="weight_fc")
-        bias_fc = tf.Variable(tf.random_normal([1, 1], mean=0.0, stddev=1.0), name="bias_fc")
+        weight_fc = tf.Variable(tf.random_normal([8, 1], mean=0.0, stddev=1.0, dtype=tf.float32), name="weight_fc")
+        bias_fc = tf.Variable(tf.random_normal([1, 1], mean=0.0, stddev=1.0, dtype=tf.float32), name="bias_fc")
         # 输出层前向传播计算
         y_predict = tf.matmul(A1, weight_fc) + bias_fc
 
@@ -80,6 +80,7 @@ def wind_speed_prediction():
     plt.figure()
     plt.plot(loss_list)
     plt.show()
+
 
 if __name__ == '__main__':
     wind_speed_prediction()

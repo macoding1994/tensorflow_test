@@ -70,12 +70,14 @@ def wind_speed_prediction():
     with tf.Session() as sess:
         sess.run(tf.initialize_all_variables())
 
-        for i in range(500):
+        for i in range(20):
             loss_run, _ = sess.run([loss, train_run], feed_dict={X: x_data, y: y_data})
             # wh, bh = sess.run([weight_hid, bias_hid])
             loss_list.append(loss_run)
             print("迭代%d步  损失为：%f " % (i + 1, loss_run))
             # print(np.shape(wh),np.shape(bh))
+        test_result = sess.run(y_predict, feed_dict={X: x_data})
+        print(test_result)
 
     plt.figure()
     plt.plot(loss_list)

@@ -17,6 +17,17 @@ import matplotlib.pyplot as plt
 # 添加Tensorboard观察变量、损失变化
 # 训练模型保存、模型存在加载模型进行预测
 
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
+
+gpuConfig = tf.ConfigProto(allow_soft_placement=True)
+gpuConfig.gpu_options.allow_growth = True
+gpuConfig.log_device_placement=True
+
+train_test = True
+# train_test = False
+
+
 def wind_speed_prediction():
     # 1.数据写入
     x_data = []
@@ -33,6 +44,11 @@ def wind_speed_prediction():
     for var in ret:
         x_data.append(var[:-1])
         y_data.append([var[-1]])
+
+    # with open('real_data.txt','w') as f:
+    #     for var in y_data:
+    #         f.write(str(var[0]))
+    #         f.write('\n')
 
     # 2.前向传播
     # 定义网络输入特征
@@ -67,21 +83,32 @@ def wind_speed_prediction():
 
     # 运行训练网络
     loss_list = []
-    with tf.Session() as sess:
+    # 保存模型
+    saver = tf.train.Saver()
+    with tf.Session(config=gpuConfig) as sess:
         sess.run(tf.initialize_all_variables())
-
-        for i in range(20):
-            loss_run, _ = sess.run([loss, train_run], feed_dict={X: x_data, y: y_data})
-            # wh, bh = sess.run([weight_hid, bias_hid])
-            loss_list.append(loss_run)
-            print("迭代%d步  损失为：%f " % (i + 1, loss_run))
-            # print(np.shape(wh),np.shape(bh))
-        test_result = sess.run(y_predict, feed_dict={X: x_data})
-        print(test_result)
-
-    plt.figure()
-    plt.plot(loss_list)
-    plt.show()
+        # 参数加载
+        ckpt = tf.train.latest_checkpoint('./tmp/model/model481')
+        if ckpt:
+            saver.restore(sess, ckpt)
+        if not train_test:
+            for i in range(500000):
+                loss_run, _ = sess.run([loss, train_run], feed_dict={X: x_data, y: y_data})
+                # wh, bh = sess.run([weight_hid, bias_hid])
+                loss_list.append(loss_run)
+                print("迭代%d步  损失为：%f " % (i + 1, loss_run))
+                # print(np.shape(wh),np.shape(bh))
+                if i % 100 == 0:
+                    saver.save(sess,'./tmp/model/model481/fc_nn_model')
+        else:
+            test_result = sess.run(y_predict, feed_dict={X: x_data})
+            # with open('test_data.txt','w') as f:
+            #     for var in test_result:
+            #         f.write(str(var[0]))
+            #         f.write('\n')
+    # plt.figure()
+    # plt.plot(loss_list)
+    # plt.show()
 
 
 if __name__ == '__main__':

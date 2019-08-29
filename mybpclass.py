@@ -27,8 +27,8 @@ class BPNN(object):
         self.saver = tf.train.Saver()
 
 
-    def add_layer(self,inputs, in_size, out_size, activation_function=None):
-        Weights = tf.Variable(tf.random_normal([in_size, out_size]))
+    def add_layer(self,inputs, out_size, activation_function=None):
+        Weights = tf.Variable(tf.random_normal([None, out_size,],dtype=tf.float32))
         biases = tf.Variable(tf.zeros([1, out_size]))
         Wx_plus_b = tf.matmul(inputs, Weights) + biases
         if activation_function is None:
